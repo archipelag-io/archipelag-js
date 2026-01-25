@@ -1,0 +1,52 @@
+{
+  "name": "@archipelag/sdk",
+  "version": "0.1.0",
+  "description": "Official JavaScript/TypeScript SDK for Archipelag.io",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src/",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "archipelag",
+    "ai",
+    "inference",
+    "distributed-compute",
+    "sdk"
+  ],
+  "author": "archipelag.io <hello@archipelag.io>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/archipelag-io/archipelag-js.git",
+    "directory": "packages/sdk"
+  },
+  "homepage": "https://docs.archipelag.io/sdk/javascript",
+  "dependencies": {
+    "eventsource-parser": "^1.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
