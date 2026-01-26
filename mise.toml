@@ -1,0 +1,49 @@
+[tools]
+node = "22"
+
+[env]
+NODE_ENV = "development"
+
+[tasks.setup]
+description = "Install dependencies"
+run = "npm install"
+
+[tasks.build]
+description = "Build all packages"
+run = "npm run build"
+
+[tasks.dev]
+description = "Start development mode"
+run = "npm run build -- --watch"
+
+[tasks.test]
+description = "Run tests"
+run = "npm run test"
+
+[tasks.lint]
+description = "Run linter"
+run = "npm run lint"
+
+[tasks.clean]
+description = "Clean build artifacts"
+run = "npm run clean"
+
+[tasks."fmt"]
+description = "Format code with Prettier"
+run = "npx prettier --write ."
+
+[tasks."fmt:check"]
+description = "Check code formatting"
+run = "npx prettier --check ."
+
+[tasks.typecheck]
+description = "Run TypeScript type checking"
+run = "npx tsc --noEmit"
+
+[tasks.ci]
+description = "Run all CI checks"
+depends = ["lint", "typecheck", "test"]
+
+[tasks.publish]
+description = "Publish packages to npm"
+run = "npm run build && npx turbo run publish"
