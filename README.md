@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://www.npmjs.com/package/@archipelag/sdk"><img src="https://img.shields.io/npm/v/@archipelag/sdk?color=blue" alt="npm"></a>
+  <a href="https://github.com/archipelag-io/archipelag-js/blob/main/LICENSE"><img src="https://img.shields.io/github/license/archipelag-io/archipelag-js" alt="License"></a>
+  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5.0+-blue" alt="TypeScript"></a>
+</p>
+
 # Archipelag JavaScript SDK
 
 Official JavaScript/TypeScript SDK for [Archipelag.io](https://archipelag.io) distributed compute platform.
@@ -90,6 +96,10 @@ npm run build
 # Run tests
 npm test
 ```
+
+## Contributing
+
+Contributions are welcome! Please see our [Contributing Guidelines](https://github.com/archipelag-io/.github/blob/main/CONTRIBUTING.md) and [Code of Conduct](https://github.com/archipelag-io/.github/blob/main/CODE_OF_CONDUCT.md).
 
 ## License
 
