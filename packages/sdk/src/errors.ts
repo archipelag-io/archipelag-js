@@ -1,9 +1,9 @@
 /**
- * Archipelag SDK Errors
+ * Archipelag.io SDK Errors
  */
 
 /**
- * Base error class for all Archipelag SDK errors
+ * Base error class for all Archipelag.io SDK errors
  */
 export class ArchipelagError extends Error {
   statusCode?: number;

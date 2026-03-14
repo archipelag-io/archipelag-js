@@ -1,5 +1,5 @@
 /**
- * Archipelag React Context
+ * Archipelag.io React Context
  */
 
 import React, {
@@ -18,7 +18,7 @@ const ArchipelagContext = createContext<ArchipelagContextValue | null>(null);
 
 export interface ArchipelagProviderProps {
   /**
-   * Your Archipelag API key
+   * Your Archipelag.io API key
    */
   apiKey: string;
   /**
@@ -32,7 +32,7 @@ export interface ArchipelagProviderProps {
 }
 
 /**
- * Provider component that makes the Archipelag client available to all children
+ * Provider component that makes the Archipelag.io client available to all children
  *
  * @example
  * ```tsx
@@ -65,7 +65,7 @@ export function ArchipelagProvider({
 }
 
 /**
- * Hook to access the Archipelag client
+ * Hook to access the Archipelag.io client
  *
  * @example
  * ```tsx

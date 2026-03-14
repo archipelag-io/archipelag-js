@@ -1,5 +1,5 @@
 /**
- * Archipelag SDK Types
+ * Archipelag.io SDK Types
  */
 
 export type JobStatus =

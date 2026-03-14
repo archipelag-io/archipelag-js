@@ -4,7 +4,7 @@
   <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5.0+-blue" alt="TypeScript"></a>
 </p>
 
-# Archipelag JavaScript SDK
+# Archipelag.io JavaScript SDK
 
 Official JavaScript/TypeScript SDK for [Archipelag.io](https://archipelag.io) distributed compute platform.
 

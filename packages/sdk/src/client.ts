@@ -1,5 +1,5 @@
 /**
- * Archipelag SDK Client
+ * Archipelag.io SDK Client
  */
 
 import { createParser, type ParsedEvent } from 'eventsource-parser';
@@ -32,7 +32,7 @@ const DEFAULT_BASE_URL = 'https://api.archipelag.io';
 const DEFAULT_TIMEOUT = 60000;
 
 /**
- * Archipelag API Client
+ * Archipelag.io API Client
  *
  * @example
  * ```typescript
