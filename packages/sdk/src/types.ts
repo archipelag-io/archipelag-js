@@ -174,3 +174,72 @@ export interface CreateJobRequest {
   workload: string;
   input: Record<string, unknown>;
 }
+
+// ===========================================================================
+// Batch Jobs
+// ===========================================================================
+
+/**
+ * A child job within a batch
+ */
+export interface BatchChild {
+  id: string;
+  batchIndex: number;
+  state: string;
+  error?: string;
+  hostId?: string;
+}
+
+/**
+ * Batch configuration and counters
+ */
+export interface BatchConfig {
+  chunkCount: number;
+  mergeStrategy: string;
+  failMode: string;
+  completed: number;
+  failed: number;
+}
+
+/**
+ * A batch job with its children
+ */
+export interface BatchJob {
+  id: string;
+  state: string;
+  workload: string;
+  batch: BatchConfig;
+  children: BatchChild[];
+  createdAt: string;
+}
+
+/**
+ * Batch progress information
+ */
+export interface BatchProgress {
+  parentId: string;
+  parentState: string;
+  chunkCount: number;
+  mergeStrategy: string;
+  failMode: string;
+  childStates: Record<string, number>;
+  children: BatchChild[];
+}
+
+/**
+ * Options for submitting a batch job
+ */
+export interface BatchOptions {
+  mergeStrategy?: 'concat' | 'flatten';
+  failMode?: 'best_effort' | 'fail_fast';
+  maxParallelism?: number;
+  region?: string;
+  bidPrice?: number;
+}
+
+/**
+ * Callback for batch progress updates
+ */
+export interface BatchProgressCallback {
+  (completed: number, failed: number, total: number): void;
+}

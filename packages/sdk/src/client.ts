@@ -15,6 +15,10 @@ import {
 import type {
   Account,
   ApiKey,
+  BatchJob,
+  BatchOptions,
+  BatchProgress,
+  BatchProgressCallback,
   ChatOptions,
   ChatResult,
   ClientOptions,
@@ -451,6 +455,140 @@ export class Archipelag {
       results.push(completed);
     }
     return results;
+  }
+
+  // ===========================================================================
+  // Server-side Batch Jobs
+  // ===========================================================================
+
+  /**
+   * Submit a batch job to be distributed across multiple Islands
+   */
+  async submitBatch(
+    workload: string,
+    inputs: Record<string, unknown>[],
+    options: BatchOptions = {}
+  ): Promise<BatchJob> {
+    const body: Record<string, unknown> = {
+      workload,
+      inputs,
+      merge_strategy: options.mergeStrategy || 'concat',
+      fail_mode: options.failMode || 'best_effort',
+    };
+    if (options.maxParallelism !== undefined) body.max_parallelism = options.maxParallelism;
+    if (options.region !== undefined) body.region = options.region;
+    if (options.bidPrice !== undefined) body.bid_price = String(options.bidPrice);
+
+    // Use raw request since batch response shape differs from standard {data: ...}
+    const response = await fetch(`${this.baseUrl}/api/v1/jobs/batch`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${this.apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      await this.handleResponse(response);
+    }
+
+    const data = await response.json();
+    return this.mapBatchJob(data);
+  }
+
+  /**
+   * Get batch job progress
+   */
+  async getBatchStatus(batchId: string): Promise<BatchProgress> {
+    const response = await fetch(
+      `${this.baseUrl}/api/v1/jobs/${batchId}/batch-status`,
+      {
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      await this.handleResponse(response);
+    }
+
+    const data = await response.json();
+    return {
+      parentId: data.parent_id,
+      parentState: data.parent_state,
+      chunkCount: data.chunk_count,
+      mergeStrategy: data.merge_strategy,
+      failMode: data.fail_mode,
+      childStates: data.child_states || {},
+      children: (data.children || []).map((c: any) => ({
+        id: c.id,
+        batchIndex: c.batch_index,
+        state: c.state,
+        error: c.error,
+        hostId: c.host_id,
+      })),
+    };
+  }
+
+  /**
+   * Wait for a batch job to complete
+   */
+  async waitForBatch(
+    batchId: string,
+    pollInterval = 2000,
+    timeout?: number,
+    onProgress?: BatchProgressCallback
+  ): Promise<BatchProgress> {
+    const start = Date.now();
+
+    while (true) {
+      const progress = await this.getBatchStatus(batchId);
+
+      if (onProgress) {
+        const completed = progress.childStates['succeeded'] || 0;
+        const failed = progress.childStates['failed'] || 0;
+        onProgress(completed, failed, progress.chunkCount);
+      }
+
+      if (['succeeded', 'failed', 'cancelled'].includes(progress.parentState)) {
+        if (progress.parentState === 'failed') {
+          throw new JobFailedError('Batch failed', batchId);
+        }
+        return progress;
+      }
+
+      if (timeout && Date.now() - start > timeout) {
+        throw new ArchipelagError(`Batch ${batchId} did not complete within ${timeout}ms`);
+      }
+
+      await this.sleep(pollInterval);
+    }
+  }
+
+  private mapBatchJob(data: any): BatchJob {
+    return {
+      id: data.id,
+      state: data.state,
+      workload: data.workload,
+      batch: {
+        chunkCount: data.batch?.chunk_count || 0,
+        mergeStrategy: data.batch?.merge_strategy || 'concat',
+        failMode: data.batch?.fail_mode || 'best_effort',
+        completed: data.batch?.completed || 0,
+        failed: data.batch?.failed || 0,
+      },
+      children: (data.children || []).map((c: any) => ({
+        id: c.id,
+        batchIndex: c.batch_index,
+        state: c.state,
+        error: c.error,
+        hostId: c.host_id,
+      })),
+      createdAt: data.created_at,
+    };
   }
 
   // ===========================================================================
